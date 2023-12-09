@@ -1,5 +1,6 @@
 import { EventEmitter } from "ws";
 import { RPC, RPCUser } from "./rpc";
+import { MyEmitter } from "./emitter";
 
 export interface ChannelData {
   id: string;
@@ -18,11 +19,21 @@ export interface ChannelData {
   }[];
 }
 
-export class DiscordLobby extends EventEmitter {
+interface DiscordLobbyEvents {
+  speak: RPCUser;
+  nospeak: RPCUser;
+  join: RPCUser;
+  leave: RPCUser;
+  destroy: undefined;
+}
+
+export class DiscordLobby extends MyEmitter<DiscordLobbyEvents> {
   private rpc: RPC;
   channelData: ChannelData;
   me: RPCUser;
   users: Map<string, RPCUser> = new Map();
+  private static cache: DiscordLobby;
+
   constructor(rpc: RPC, channelData: ChannelData) {
     super();
     this.rpc = rpc;
@@ -41,7 +52,7 @@ export class DiscordLobby extends EventEmitter {
       "SPEAKING_START",
       { channel_id: this.channelData.id },
       (args) => {
-        this.emit("speak", args.user_id);
+        this.emit("speak", this.users.get(args.user_id) as RPCUser);
       }
     );
 
@@ -49,7 +60,7 @@ export class DiscordLobby extends EventEmitter {
       "SPEAKING_STOP",
       { channel_id: this.channelData.id },
       (args) => {
-        this.emit("nospeak", args.user_id);
+        this.emit("nospeak", this.users.get(args.user_id) as RPCUser);
       }
     );
 
@@ -77,17 +88,52 @@ export class DiscordLobby extends EventEmitter {
   }
 
   private async destroy() {
-    this.emit("destroy");
+    this.emit("destroy", undefined);
     this.rpc.unsubscribeAll();
   }
 
   static async get() {
+    if (this.cache) return this.cache;
+
     const rpc = await RPC.get();
     const data = await rpc.getSelectedVoiceChannel();
 
     if (!data) {
       throw new Error("Not in a voice channel");
     }
-    return new DiscordLobby(rpc, data);
+    this.cache = new DiscordLobby(rpc, data);
+
+    return this.cache;
   }
 }
+
+async function main() {
+  try {
+    const lobby = await DiscordLobby.get();
+    console.log("Connected to voice channel:", lobby.channelData.name);
+
+    lobby.on("speak", (user) => {
+      console.log(`User ${user.id} started speaking.`);
+    });
+
+    lobby.on("nospeak", (user) => {
+      console.log(`User ${user.id} stopped speaking.`);
+    });
+
+    lobby.on("join", (user) => {
+      console.log(`User ${user.id} joined the channel.`);
+    });
+
+    lobby.on("leave", (user) => {
+      console.log(`User ${user.id} left the channel.`);
+    });
+
+    lobby.on("destroy", () => {
+      console.log("Lobby destroyed, you left.");
+    });
+  } catch (error) {
+    console.error("Error:", error.message);
+  }
+}
+
+main();

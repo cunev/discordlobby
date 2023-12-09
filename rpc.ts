@@ -110,10 +110,10 @@ interface RPCApp {
   icon: string;
   description: string;
   type: null;
-  summary: "";
+  summary: string;
   verify_key: string;
-  flags: 0;
-  hook: true;
+  flags: number;
+  hook: boolean;
   is_monetized: false;
 }
 export interface RPCUser {
@@ -121,9 +121,9 @@ export interface RPCUser {
   username: string;
   avatar: string;
   discriminator: string;
-  public_flags: 0;
-  premium_type: 2;
-  flags: 0;
+  public_flags: number;
+  premium_type: number;
+  flags: number;
   banner: null;
   accent_color: null;
   global_name: string;
