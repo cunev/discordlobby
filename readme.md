@@ -17,13 +17,13 @@ You can use this to create lobbies in games based on user's voice channel.
 Before you begin, ensure you have Node.js installed on your system. Then, you can install the package using npm:
 
 ```
-npm install discordlobby
+npm install @dimulcu/discordlobby
 ```
 
 Or using yarn:
 
 ```
-yarn add discordlobby
+yarn add @dimulcu/discordlobby
 ```
 
 ## Usage

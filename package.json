@@ -1,13 +1,19 @@
 {
-  "name": "discordlobby",
+  "name": "@dimulcu/discordlobby",
   "version": "1.0.0",
-  "main": "app.ts",
+  "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "tsx watch ."
+    "dev": "tsx watch .",
+    "build": "tsc && esbuild index.ts --bundle --format=cjs --platform=node --outdir=dist"
   },
   "devDependencies": {
     "@types/ws": "^8.5.10",
     "tsx": "^4.6.2"
+  },
+  "dependencies": {
+    "esbuild": "^0.19.8",
+    "typescript": "^5.3.3",
+    "ws": "^8.14.2"
   }
 }

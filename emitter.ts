@@ -1,4 +1,4 @@
-import { EventEmitter } from "ws";
+import { EventEmitter } from "node:events";
 
 type EventMap = Record<string, any>;
 

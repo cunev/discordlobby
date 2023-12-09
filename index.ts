@@ -1,4 +1,3 @@
-import { EventEmitter } from "ws";
 import { RPC, RPCUser } from "./rpc";
 import { MyEmitter } from "./emitter";
 
@@ -106,34 +105,3 @@ export class DiscordLobby extends MyEmitter<DiscordLobbyEvents> {
     return this.cache;
   }
 }
-
-async function main() {
-  try {
-    const lobby = await DiscordLobby.get();
-    console.log("Connected to voice channel:", lobby.channelData.name);
-
-    lobby.on("speak", (user) => {
-      console.log(`User ${user.id} started speaking.`);
-    });
-
-    lobby.on("nospeak", (user) => {
-      console.log(`User ${user.id} stopped speaking.`);
-    });
-
-    lobby.on("join", (user) => {
-      console.log(`User ${user.id} joined the channel.`);
-    });
-
-    lobby.on("leave", (user) => {
-      console.log(`User ${user.id} left the channel.`);
-    });
-
-    lobby.on("destroy", () => {
-      console.log("Lobby destroyed, you left.");
-    });
-  } catch (error) {
-    console.error("Error:", error.message);
-  }
-}
-
-main();
