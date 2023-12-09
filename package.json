@@ -1,0 +1,13 @@
+{
+  "name": "discordlobby",
+  "version": "1.0.0",
+  "main": "app.ts",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsx watch ."
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.10",
+    "tsx": "^4.6.2"
+  }
+}
